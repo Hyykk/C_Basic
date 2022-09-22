@@ -1,0 +1,118 @@
+#include<stdio.h>
+
+int Subsequence(int N, int B, int* arr);			//부분수열의 개수를 구하는 함수 선언
+int factorial(int a);							//팩토리얼 값을 구하는 함수 선언
+
+int main(void)
+{
+	int str[20] = { 0, };				//충분한 크기의 배열선언
+	int N, B, result;
+	printf("N : ");
+	scanf_s("%d", &N);					//N입력
+	printf("\n");
+	printf("B : ");					//B입력
+	scanf_s("%d", &B);
+	printf("\n");
+
+	int i;
+	printf("N개의 자연수 입력\n");
+	for (i = 0; i < N; i++)		//배열의 크기N만큼 수 입력받음
+	{
+		scanf_s("%d", &str[i]);
+	}
+
+	result = Subsequence(N, B, str);	//result에 함수반환값을 입력
+
+	printf("중간값이 %d인 부분수열의 개수 : %d", B, 
+		result);	//출력
+
+	return 0;				//함수 반환
+}
+
+int Subsequence(int N, int B, int* arr)
+{
+	int change = 0;						//배열의 수끼리 교환값 받을 변수
+	int size = 0;
+	int size_front = 0;					//중앙값으로부터 앞에를 front, 뒤를 rear로 정하고 사이즈를 넣는 변수
+	
+	
+	//배열을 크기순으로 정렬
+	for (int i = 0; i < N; i++)			//배열의 크기만큼 반복
+	{
+		for (int j = 0; j < N - 1; j++) //배열의 크기(N)-1만큼 반복
+		{
+			if (arr[j] > arr[j + 1])	//만일 앞보다 뒤가 작을 때
+			{
+				change = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = change;
+			}
+		}
+	}
+					
+	while (arr[size_front] != B)				//중앙 값으로부터 앞의 배열의 크기
+	{
+		size_front++;
+	}
+
+	while (arr[size] != '\0')						//배열의 크기(NULL값이 나올 때 까지)
+	{
+		size++;
+	}
+
+	int size_rear = size - size_front - 1;			//size에서 앞의크기와 중앙값을 빼서 중앙값뒤의 배열의 크기를 구함
+
+	int fac_front = factorial(size_front);
+	int fac_rear = factorial(size_rear);
+
+	if (size_front <= size_rear)
+	{
+		
+		int sum_front = 0, sum_rear = 0, sum = 0;
+
+		for (int r = 1; r <= size_front; r++)
+		{
+			int front_r = size_front - r;		
+			int rear_r = size_rear - r; 
+			int fac_front_r = factorial(front_r);			//팩토리얼값은 앞에 fac_을 붙여 변수설정
+			int fac_rear_r = factorial(rear_r);
+			int fac_r = factorial(r);
+			
+			sum_front = fac_front / (fac_front_r * fac_r);	//갯수 구하는 공식(조합)
+			sum_rear = fac_rear / (fac_rear_r * fac_r);
+			sum = sum + (sum_front * sum_rear);
+		}		
+		return sum;											//sum을 반환
+	}
+
+
+	if (size_front > size_rear)
+	{
+		int sum_front = 0, sum_rear = 0, sum = 0;
+		for (int r = 1; r <= size_rear; r++)
+		{
+			int front_r = size_front - r;		
+			int rear_r = size_rear - r; 
+			int fac_front_r = factorial(front_r);			//팩토리얼 변수
+			int fac_rear_r = factorial(rear_r);
+			int fac_r = factorial(r);
+
+			sum_front = fac_front / (fac_front_r * fac_r);		///갯수 구하는 공식(조합)
+			sum_rear = fac_rear / (fac_rear_r * fac_r);
+			sum = sum + (sum_front * sum_rear);
+
+			return sum;										//sum을 반환
+		}
+	}
+}
+
+int factorial(int a) {		//팩토리얼 함수 정의
+	int result = 1;			//1! = 1 이므로 초깃값을 1로 설정
+
+	for (int i = a; i > 0; i--)  
+	{
+		result = result * i;
+	}
+
+	return result;			//결과값 반환
+}
